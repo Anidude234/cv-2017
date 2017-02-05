@@ -8,24 +8,30 @@ class AppConfig
     public:
         AppConfig();
         void setFileName(std::string fileName);
-        void setDeviceID(int deviceID);
+        void setDeviceGearID(int GdeviceID);
+        void setDeviceBoilerID(int BdeviceID);
         void setIsFile(int isFile);
-        void setIsDevice(int isDevice);
+        void setIsBoilerDevice(int isBoilerDevice);
+        void setIsGearDevice(int isGearDevice);
         void setIsHeadless(int isHeadless);
         void setIsNetworking(int isNetworking);
         void setIsDebug(int debug);
-        int getDeviceID();
+        int getDeviceBoilerID();
+        int getDeviceGearID();
         int getIsFile();
-        int getIsDevice();
+        int getIsBoilerDevice();
+        int getIsGearDevice();
         int getIsHeadless();
         int getIsNetworking();
         int getIsDebug();
         std::string getFileName();
     private:
         std::string fileName;
-        int deviceID;
+        int deviceBoilerID;
+        int deviceGearID;
         int isFile;
-        int isDevice;
+        int isBoilerDevice;
+        int isGearDevice;
         int isHeadless;
         int isNetworking;
         int isDebug;

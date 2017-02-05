@@ -8,6 +8,7 @@ class CmdLineInterface
     private:
         //void printUsage(std::string name);
         AppConfig config;
+
     public:
         CmdLineInterface(int argc, char *argv[]);
         AppConfig getConfig();

@@ -36,7 +36,7 @@ double Target::getWidth()
 
 //True if Gears, False if Boilers
 bool Target::getType() {
-  if (getHeight() > getWidth()) {
+  if (edgeL != edgeR) {
     return true;
   }
 if (getHeight() < getWidth()) {
