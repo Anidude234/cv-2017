@@ -31,21 +31,31 @@ int main(int argc, char* argv[])
 	TargetDetector detector;
 	TargetProcessor processor;
 	NetworkController networkController;
-  	VideoDevice camera;
+  VideoDevice cameraB;
+  VideoDevice cameraG;
 	CmdLineInterface interface(argc, argv);
 	AppConfig config = interface.getConfig();
 
-	if(config.getIsDevice())
+	if(config.getIsBoilerDevice())
 	{
-		camera.startCapture(config.getDeviceID());
+		cameraB.startCapture(config.getDeviceBoilerID());
 		if(config.getIsDebug())
 		std::cout << "Camera is ready\n";
 	}
 
+  if(config.getIsGearDevice())
+	{
+		cameraB.startCapture(config.getDeviceGearID());
+		if(config.getIsDebug())
+		std::cout << "Camera is ready\n";
+	}
+
+
     if(config.getIsNetworking())
         networkController.startServer();
 
-    cv::Mat image;
+    cv::Mat BoilerImage;
+    cv::Mat GearImage;
 
     int loop = 1;
     cv::namedWindow("Live Video Feed", cv::WINDOW_NORMAL);
@@ -72,9 +82,10 @@ int main(int argc, char* argv[])
 			ping++;
 		}
 
-		image = camera.getImage();
+		BoilerImage = cameraB.getImage();
+    GearImage = cameraG.getImage();
 
-	   	if(!image.data) // check if image is valid
+	   	if(!BoilerImage.data && !GearImage.data) // check if image is valid
 	    {
 	          if(config.getIsDebug()){
 	            std::cout << "failed to read image" << std::endl;
@@ -82,22 +93,24 @@ int main(int argc, char* argv[])
 	          return -1;
 	    }
 	    else {
-	   	  imshow("Live Video Feed", image);
+	   	  imshow("Live Boiler Video Feed", BoilerImage);
+        imshow("Live Gear Video Feed", BoilerImage);
 	   }
 
 	    if(config.getIsDebug()){
 	        std::cout << "Image Read" << std::endl;
 	    }
-	    Target* targetG = detector.processImage(image, true); //Gears
+	    Target* targetG = detector.processImage(GearImage, true); //Gears
 		  //Detects if Target matches Gear reflective tape
-	   	Target* targetB = detector.processImage(image, false); //Boiler
+	   	Target* targetB = detector.processImage(BoilerImage, false); //Boiler
 	    	//Detects if Target matches Boiler reflective tape
       	if(config.getIsDebug()){
 	      std::cout << "Image Processed by Target Detector" << std::endl;
       	}
 
-        bool foundGear = false;
-        bool foundBoiler = false;
+    bool foundGear = false;
+    bool foundBoiler = true;
+
         std::cout<<"right"<<std::endl;
 
         if (targetG != NULL || targetB != NULL)
@@ -106,34 +119,16 @@ int main(int argc, char* argv[])
 
             if(targetG != NULL)
 			{
-            	foundGear = targetG -> getType();
+            	foundGear = true;
             	std::cout << "Got Type Gears: " << foundGear << std::endl;
-				if(foundGear)
-				{
-            		foundGear = true;
-				}
-				else
-				{
-					foundGear = false;
-				}
-				//foundGear = true;
-        	}
+
+        }
 
         	if(targetB != NULL)
 			{
-            	foundBoiler = targetB -> getType();
-         		std::cout << "Got Type Boiler: " << foundBoiler << std::endl;
-         		if(foundBoiler)
-				{
-            		foundBoiler= true;
-				}
-				else
-
-				{
-					foundBoiler = false;
-				}
-				//foundBoiler = true;
-            }
+            	foundBoiler = false;
+              std::cout << "Got Type Boiler: " << foundBoiler << std::endl;
+         }
 
   	  		std::cout <<"About to check the value of foundTarget" << std::endl;
 
@@ -278,9 +273,15 @@ int main(int argc, char* argv[])
        		delete targetB;
 		    //refresh loop
  	   }
-	  GaussianBlur(image,image,Size(3,3),31);
-	    if (config.getIsHeadless() == 0)
-	  	imshow("Live Video Feed", image);
+	  GaussianBlur(GearImage,GearImage,Size(3,3),31);
+	    if (config.getIsHeadless() == 0){
+	  	imshow("Live Gear Video Feed", GearImage);
     }
+    GaussianBlur(BoilerImage,BoilerImage,Size(3,3),31);
+	    if (config.getIsHeadless() == 0){
+	  	imshow("Live Boiler Video Feed", BoilerImage);
+    }
+
+  }
     return 0;
 }

@@ -9,7 +9,7 @@
 
 void printUsage(std::string name)
 {
-  std::cerr << "Usage: " << name << " (-d <Gdevice_num> -D <Bdevice_num> | -f <filename>) [--no-networking] [--headless] [--debug]" << std::endl;
+  std::cerr << "Usage: " << name << " (-g <Gdevice_num> -b <Bdevice_num> | -f <filename>) [--no-networking] [--headless] [--debug]" << std::endl;
 }
 
 CmdLineInterface::CmdLineInterface(int argc, char *argv[])
@@ -23,14 +23,14 @@ CmdLineInterface::CmdLineInterface(int argc, char *argv[])
       {"headless", no_argument, &isHeadless, 1},
       {"no-networking", no_argument, &isNetworking, 0},
       {"debug", no_argument, &isDebug, 1},
-      {"device", required_argument, 0, 'd'},
-      {"Bdevice", required_argument, 0, 'D'},
+      {"device", required_argument, 0, 'g'},
+      {"Bdevice", required_argument, 0, 'b'},
       {"file", required_argument, 0, 'f'},
       {0, 0, 0, 0}
     };
 
     int option_index = 0;
-    int c = getopt_long(argc, argv, "d:D:f:", long_options, &option_index);
+    int c = getopt_long(argc, argv, "g:b:f:", long_options, &option_index);
 
     if (c == -1) // End of Options
     break;
@@ -38,7 +38,7 @@ CmdLineInterface::CmdLineInterface(int argc, char *argv[])
     switch (c) {
       case 0:
       break;
-      case 'd':
+      case 'g':
       if(config.getIsFile())
       {
         printUsage(argv[0]);
@@ -47,7 +47,7 @@ CmdLineInterface::CmdLineInterface(int argc, char *argv[])
       config.setDeviceGearID(boost::lexical_cast<int>(optarg));
       config.setIsGearDevice(1);
       break;
-      case 'D':
+      case 'b':
       if(config.getIsFile())
       {
         printUsage(argv[0]);
