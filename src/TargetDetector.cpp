@@ -12,6 +12,9 @@ Target* TargetDetector::processImage(Mat input, bool tar) {
     //input = canny(thresholdImage(input,53,58,0,255,228,238));
     input = thresholdImage(input,53,58,0,255,228,238);
 
+    imshow("threshold", input);
+    input = canny(input);
+    imshow("canny", input);
     dilate(input, input, Mat());
 
     std::vector<std::vector<Point> > contours = contour(input);
@@ -20,9 +23,8 @@ Target* TargetDetector::processImage(Mat input, bool tar) {
 
 
 
-    //if (!config.getIsHeadless)
-    if(tar == true) imshow("GContours",input);
-    if(tar == false) imshow("BContours",input);
+
+    imshow("Contours",input);
     // std::cout << "not filterContours" << std::endl;
 
     if (&finalContour[0] == NULL || &finalContour[1] == NULL) {
